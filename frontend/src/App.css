@@ -1,0 +1,235 @@
+.app {
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  overflow: hidden;
+}
+
+/* Header Styles */
+.header {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem 2rem;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.current-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.current-user strong {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.user-department {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.user-switch {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.user-switch:hover {
+  border-color: #999;
+}
+
+.logout-button {
+  padding: 0.5rem 1.5rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 2rem auto;
+  width: 100%;
+  padding: 0 2rem;
+  height: calc(100vh - 120px); /* Full viewport height minus header and margins */
+}
+
+.dashboard-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.dashboard-info small {
+  color: #666;
+}
+
+.dashboard-embed {
+  flex: 1;
+  min-height: 600px;
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ensure Databricks dashboard content fills container */
+.dashboard-embed > * {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.dashboard-embed iframe,
+.dashboard-embed > div {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+}
+
+/* Login Screen */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.login-container h1 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.login-container p {
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.user-selection {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.user-button {
+  padding: 1.5rem 2rem;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.user-button:hover {
+  border-color: #2196F3;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+  transform: translateY(-2px);
+}
+
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.user-dept {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Loading and Error States */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+.error {
+  padding: 1rem;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .user-selection {
+    flex-direction: column;
+  }
+
+  .user-button {
+    width: 100%;
+  }
+
+  .dashboard-container {
+    padding: 0 1rem;
+  }
+}
+
