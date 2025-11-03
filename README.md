@@ -171,8 +171,8 @@ await dashboard.initialize()
 ### Step 1: Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd aibi-external-embedding
+git clone https://github.com/databricks-solutions/aibi-dashboards-external-embedding.git
+cd aibi-dashboards-external-embedding
 ```
 
 ### Step 2: Install Requirements in Virtual Environment
