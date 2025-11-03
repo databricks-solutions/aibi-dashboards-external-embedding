@@ -201,12 +201,6 @@ cd backend
 cp .env.example .env  # Windows: copy .env.example .env
 ```
 
-**Get Databricks credentials:**
-
-1. **Service Principal:** Databricks → Settings → Identity and Access → Service Principals → Generate Secret
-2. **Dashboard ID:** From URL `/sql/dashboards/{DASHBOARD_ID}`
-3. **Workspace ID:** Settings → Workspace Settings
-
 **Edit `backend/.env`:**
 ```env
 DATABRICKS_WORKSPACE_URL=https://your-workspace.cloud.databricks.com
