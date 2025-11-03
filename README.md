@@ -201,6 +201,23 @@ cd backend
 cp .env.example .env  # Windows: copy .env.example .env
 ```
 
+**Get the required values:**
+
+1. **DATABRICKS_WORKSPACE_URL**: Your workspace URL (e.g., `https://your-workspace.cloud.databricks.com`)
+   - Copy from your browser address bar when logged into Databricks
+
+2. **DATABRICKS_CLIENT_ID & DATABRICKS_CLIENT_SECRET**: Service Principal credentials
+   - Go to **Settings** → **Identity and Access** → **Service Principals**
+   - Click **Add Service Principal** → Name it (e.g., "Dashboard Embedding SP")
+   - Click **Generate Secret** → Save the Client ID and Client Secret (you won't see the secret again)
+
+3. **DATABRICKS_DASHBOARD_ID**: Your dashboard's unique ID
+   - Open your dashboard in Databricks (make sure it is published)
+   - Copy the ID from the URL: `https://your-workspace.cloud.databricks.com/sql/dashboards/{DASHBOARD_ID}`
+
+4. **DATABRICKS_WORKSPACE_ID**: Your workspace's numeric ID
+   - See official docs: [AWS](https://docs.databricks.com/aws/en/workspace/workspace-details) | [Azure](https://learn.microsoft.com/en-us/azure/databricks/workspace/workspace-details) | [GCP](https://docs.databricks.com/gcp/en/workspace/workspace-details)
+
 **Edit `backend/.env`:**
 ```env
 DATABRICKS_WORKSPACE_URL=https://your-workspace.cloud.databricks.com
