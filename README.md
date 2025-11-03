@@ -164,32 +164,134 @@ await dashboard.initialize()
 | `alice` | Sales | See sales data |
 | `bob` | Engineering | See engineering data |
 
-## 🚀 Quick Setup
+## 🚀 Getting Started
 
-### 1. Backend Setup
+**Prerequisites:** Python 3.9+, Node.js 16+, npm
 
+### Step 1: Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd aibi-external-embedding
+```
+
+### Step 2: Install Requirements in Virtual Environment
+
+**Backend:**
 ```bash
 cd backend
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Copy the example file and add your credentials
-cp .env.example .env
-code .env  # Edit with your actual Databricks credentials
-
-python app.py  # Runs on http://localhost:5000
+cd ..
 ```
 
-### 2. Frontend Setup
-
+**Frontend:**
 ```bash
 cd frontend
-npm install  # Installs dependencies including @databricks/aibi-client@1.0.0
-npm run dev  # Runs on http://localhost:3000
+npm install
+cd ..
 ```
 
-**Key Dependency:** This template uses the official [@databricks/aibi-client](https://www.npmjs.com/package/@databricks/aibi-client) npm package (v1.0.0) for dashboard embedding.
+### Step 3: Create and Configure `.env` File
+
+**Create the file:**
+```bash
+cd backend
+cp .env.example .env  # Windows: copy .env.example .env
+```
+
+**Get Databricks credentials:**
+
+1. **Service Principal:** Databricks → Settings → Identity and Access → Service Principals → Generate Secret
+2. **Dashboard ID:** From URL `/sql/dashboards/{DASHBOARD_ID}`
+3. **Workspace ID:** Settings → Workspace Settings
+
+**Edit `backend/.env`:**
+```env
+DATABRICKS_WORKSPACE_URL=https://your-workspace.cloud.databricks.com
+DATABRICKS_CLIENT_ID=your-service-principal-client-id
+DATABRICKS_CLIENT_SECRET=your-service-principal-secret
+DATABRICKS_DASHBOARD_ID=your-dashboard-id
+DATABRICKS_WORKSPACE_ID=your-workspace-id
+```
+
+**Grant permissions to Service Principal:**
+
+1. **Dashboard Access:**
+   - Open your dashboard → Click **Share** → Add Service Principal with **Can View** permission
+
+2. **SQL Warehouse Access:**
+   - Go to **SQL Warehouses** → Select your warehouse → Click **Permissions**
+   - Add Service Principal with **Can Use** permission
+
+3. **Unity Catalog Data Access:**
+   - Go to **Data Explorer** → Navigate to your catalog, schema, and tables used in the dashboard
+   - For each level (catalog → schema → table), click **Permissions** tab → Add Service Principal with appropriate access
+
+### Step 4: Customize for Your Dashboard
+
+This demo uses `department` for row-level security. Customize it for your data:
+
+**A. Update the backend** (`backend/app.py`):
+
+```python
+# Change the DUMMY_USERS to match your data attribute
+DUMMY_USERS = {
+    'alice': {
+        'id': 'user_alice',
+        'name': 'Alice Johnson',
+        'email': 'alice@example.com',
+        'region': 'US-West'  # Changed from 'department' to 'region'
+    },
+    'bob': {
+        'id': 'user_bob',
+        'name': 'Bob Smith',
+        'email': 'bob@example.com',
+        'region': 'US-East'  # Changed from 'department' to 'region'
+    }
+}
+```
+
+Find this line in `mint_databricks_token()` function (~line 94):
+```python
+f"&external_value={user_data['department']}"
+```
+
+Change to:
+```python
+f"&external_value={user_data['region']}"  # Or whatever attribute you're using
+```
+
+**B. Update your dashboard SQL:**
+
+Add a `WHERE` clause using `__aibi_external_value`:
+
+```sql
+SELECT * FROM your_table
+WHERE region = __aibi_external_value  -- Filters based on user's attribute
+```
+
+### Step 5: Start the Servers
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+source venv/bin/activate  # Windows: venv\Scripts\activate
+python app.py
+# Should show: Running on http://127.0.0.1:5000
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+# Should show: Local: http://localhost:3000/
+```
+
+**Access:** Open http://localhost:3000 and login as `alice` or `bob`
+
+
 
 ## Understanding the Flow
 
@@ -229,18 +331,6 @@ npm run dev  # Runs on http://localhost:3000
       │<──────────────────────────────────────────────│
 ```
 
-## 🔑 Getting Databricks Credentials
-
-1. **Service Principal Credentials**:
-   - Go to Databricks → Settings → Identity and Access → Service Principals → Add Service Principals → Secrets
-   - Generate Secret
-   - Copy Client ID and Secret
-
-2. **Dashboard ID**:
-   - Open your dashboard
-   - Copy ID from URL: `/sql/dashboards/{DASHBOARD_ID}`
-
-
 ## ❓ Common Questions
 
 **Q: Where is the OAuth token generated?**  
@@ -268,6 +358,12 @@ In your Databricks dashboard SQL queries, use `__aibi_external_value` to filter 
 SELECT * FROM sales_data
 WHERE department = __aibi_external_value  -- Returns "Sales" for Alice, "Engineering" for Bob
 ```
+
+**Q: How do I customize this for my own dashboard?**  
+A: See [Step 4: Customize for Your Dashboard](#step-4-customize-for-your-dashboard). You'll need to:
+1. Update `DUMMY_USERS` in `backend/app.py` with your data attribute (e.g., change `department` to `region`)
+2. Update the `external_value` parameter in `mint_databricks_token()`
+3. Add `WHERE your_column = __aibi_external_value` to your dashboard SQL queries
 
 **Q: What files should I read first?**  
 A: Start with:
