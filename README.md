@@ -93,46 +93,86 @@ def get_embed_config():
 
 ### 3. Token Minting (Key Function)
 
-Note: This shows a shortened version of the code for demonstration purposes, please see app.py for the full implementation.
-
 **Backend** (`backend/app.py`)
 ```python
 def mint_databricks_token(user_data):
     """
-    Creates an OAuth token for the authenticated user using 
-    the official Databricks 3-step token generation process.
+    Mint an OAuth token for Databricks dashboard embedding.
     
-    Steps:
+    Follows the official Databricks 3-step token generation process:
     1. Get all-apis token from OIDC endpoint
     2. Get token info for the dashboard with external viewer context
     3. Generate scoped token with authorization details
     
-    The user context (external_viewer_id and external_value) enables 
-    row-level security in your dashboards.
+    This enables row-level security by passing external_viewer_id (user identity)
+    and external_value (user attributes like department) to Databricks.
     """
+    
+    # Databricks workspace configuration
+    workspace_url = os.environ.get('DATABRICKS_WORKSPACE_URL')
+    client_id = os.environ.get('DATABRICKS_CLIENT_ID')
+    client_secret = os.environ.get('DATABRICKS_CLIENT_SECRET')
+    dashboard_id = os.environ.get('DATABRICKS_DASHBOARD_ID')
+    
+    # Create Basic Auth header
+    basic_auth = base64.b64encode(
+        f"{client_id}:{client_secret}".encode()
+    ).decode()
+    
     # Step 1: Get all-apis token
     oidc_response = requests.post(
         f"{workspace_url}/oidc/v1/token",
-        data={"grant_type": "client_credentials", "scope": "all-apis"}
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {basic_auth}",
+        },
+        data=urllib.parse.urlencode({
+            "grant_type": "client_credentials",
+            "scope": "all-apis"
+        })
+    )
+    oidc_token = oidc_response.json()["access_token"]
+    
+    # Step 2: Get token info for the dashboard with user context
+    # external_viewer_id: unique user identifier for row-level security
+    # external_value: user attributes (e.g., department) for filtering
+    token_info_url = (
+        f"{workspace_url}/api/2.0/lakeview/dashboards/"
+        f"{dashboard_id}/published/tokeninfo"
+        f"?external_viewer_id={urllib.parse.quote(user_data['email'])}"
+        f"&external_value={urllib.parse.quote(user_data['department'])}"
     )
     
-    # Step 2: Get token info with user context
     token_info_response = requests.get(
-        f"{workspace_url}/api/2.0/lakeview/dashboards/{dashboard_id}/published/tokeninfo"
-        f"?external_viewer_id={user_data['email']}"
-        f"&external_value={user_data['department']}"
+        token_info_url,
+        headers={"Authorization": f"Bearer {oidc_token}"}
     )
+    token_info = token_info_response.json()
     
-    # Step 3: Generate scoped token
+    # Step 3: Generate scoped token with authorization details
+    params = token_info.copy()
+    authorization_details = params.pop("authorization_details", None)
+    params.update({
+        "grant_type": "client_credentials",
+        "authorization_details": json.dumps(authorization_details)
+    })
+    
     scoped_response = requests.post(
         f"{workspace_url}/oidc/v1/token",
-        data={
-            "grant_type": "client_credentials",
-            "authorization_details": json.dumps(authorization_details)
-        }
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {basic_auth}",
+        },
+        data=urllib.parse.urlencode(params)
     )
+    scoped_token_data = scoped_response.json()
     
-    return scoped_response.json()['access_token']
+    return {
+        'access_token': scoped_token_data['access_token'],
+        'token_type': 'Bearer',
+        'expires_in': scoped_token_data.get('expires_in', 3600),
+        'created_at': int(time.time())
+    }
 ```
 
 ### 4. Dashboard Embedding
