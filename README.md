@@ -101,11 +101,12 @@ def mint_databricks_token(user_data):
     
     Follows the official Databricks 3-step token generation process:
     1. Get all-apis token from OIDC endpoint
-    2. Get token info for the dashboard with external viewer context
+    2. Get token info for the dashboard with external user context
     3. Generate scoped token with authorization details
-    
-    This enables row-level security by passing external_viewer_id (user identity)
-    and external_value (user attributes like department) to Databricks.
+
+    The user context (external_viewer_id and external_value) enables 
+    row-level security (external_value) and access auditing (external_viewer_id) in your dashboards.
+
     """
     
     # Create Basic Auth header
