@@ -108,12 +108,6 @@ def mint_databricks_token(user_data):
     and external_value (user attributes like department) to Databricks.
     """
     
-    # Databricks workspace configuration
-    workspace_url = os.environ.get('DATABRICKS_WORKSPACE_URL')
-    client_id = os.environ.get('DATABRICKS_CLIENT_ID')
-    client_secret = os.environ.get('DATABRICKS_CLIENT_SECRET')
-    dashboard_id = os.environ.get('DATABRICKS_DASHBOARD_ID')
-    
     # Create Basic Auth header
     basic_auth = base64.b64encode(
         f"{client_id}:{client_secret}".encode()
