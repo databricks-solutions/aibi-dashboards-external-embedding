@@ -95,6 +95,12 @@ def get_embed_config():
 
 **Backend** (`backend/app.py`)
 ```python
+
+# Create Basic Auth header
+basic_auth = base64.b64encode(
+    f"{client_id}:{client_secret}".encode()
+).decode()
+
 def mint_databricks_token(user_data):
     """
     Creates an OAuth token for the authenticated user using 
@@ -108,11 +114,6 @@ def mint_databricks_token(user_data):
     The user context enables row-level security (external_value) 
     and access auditing (external_viewer_id) in your dashboards.
     """
-    
-    # Create Basic Auth header
-    basic_auth = base64.b64encode(
-        f"{client_id}:{client_secret}".encode()
-    ).decode()
     
     # Step 1: Get all-apis token
     oidc_response = requests.post(
