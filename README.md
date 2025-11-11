@@ -128,8 +128,8 @@ def mint_databricks_token(user_data):
     oidc_token = oidc_response.json()["access_token"]
     
     # Step 2: Get token info for the dashboard with user context
-    # external_viewer_id: unique user identifier for row-level security
-    # external_value: user attributes (e.g., department) for filtering
+    # external_viewer_id: unique user identifier for access auditing
+    # external_value: user attributes (e.g., department) for row-level filtering
     token_info_url = (
         f"{workspace_url}/api/2.0/lakeview/dashboards/"
         f"{dashboard_id}/published/tokeninfo"
