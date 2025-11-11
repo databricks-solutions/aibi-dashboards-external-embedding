@@ -93,6 +93,8 @@ def get_embed_config():
 
 ### 3. Token Minting (Key Function)
 
+Note: This shows a shortened version of the code for demonstration purposes, please see app.py for the full implementation.
+
 **Backend** (`backend/app.py`)
 ```python
 def mint_databricks_token(user_data):
