@@ -97,16 +97,16 @@ def get_embed_config():
 ```python
 def mint_databricks_token(user_data):
     """
-    Mint an OAuth token for Databricks dashboard embedding.
+    Creates an OAuth token for the authenticated user using 
+    the official Databricks 3-step token generation process.
     
-    Follows the official Databricks 3-step token generation process:
+    Steps:
     1. Get all-apis token from OIDC endpoint
     2. Get token info for the dashboard with external user context
     3. Generate scoped token with authorization details
 
-    The user context (external_viewer_id and external_value) enables 
-    row-level security (external_value) and access auditing (external_viewer_id) in your dashboards.
-
+    The user context enables row-level security (external_value) 
+    and access auditing (external_viewer_id) in your dashboards.
     """
     
     # Create Basic Auth header
